@@ -7,7 +7,7 @@ import numpy as np
 import glob
 
 
-def create_image_json(name, file):
+def create_image_json(name, colors_length, file):
     img = Image.open(file)
     # Resize the image to have the longest side equal to 64 pixels
     max_size = 64
@@ -18,25 +18,15 @@ def create_image_json(name, file):
         new_height = max_size
         new_width = int((max_size / img.height) * img.width)
     img = img.resize((new_width, new_height), Image.LANCZOS)
-    colors = img.convert("P").convert("RGBA").convert("RGB").getcolors()
-    print(f"Image: {name}, Colors: {len(colors)}")
-    colors = [list(color[1]) for color in colors]
-    # Remove similar colors (keep only unique colors more than 10 units apart)
-    unique_colors = []
-    for c in colors:
-        if all(np.linalg.norm(np.array(c) - np.array(u)) > 10 for u in unique_colors):
-            unique_colors.append(c)
-    colors = unique_colors
-    print(f"Unique Colors: {len(colors)}")
-
-    # Get a maximum of 16 colors
-    if len(colors) > 16:
-        # Get the 16 colors with the widest distribution
-        colors = sorted(colors, key=lambda c: np.linalg.norm(np.array(c)))[:16]
-    img = img.convert("P", dither=0, colors=colors)
+    img = img.convert("P", dither=0, colors=colors_length)
     img = img.convert("RGBA")
     map = np.asarray(img).tolist()
-
+    colors = img.convert("RGB").getcolors()
+    colors = [list(color[1]) for color in colors]
+    # limit colors to most distinct colors, but it can be less if there are not enough distinct colors
+    colors = sorted(colors, key=lambda x: (x[0] + x[1] + x[2]), reverse=True)[
+        :colors_length
+    ]
     closest_color = lambda rgb: colors[
         np.argmin(np.sqrt(np.sum((colors - np.array(rgb)) ** 2, axis=1)))
     ]
@@ -67,7 +57,7 @@ def main():
     json_data_all = []
     for file in files:
         name = os.path.splitext(os.path.basename(file))[0]
-        json_data = create_image_json(name, file)
+        json_data = create_image_json(name, 40, file)
         json_data_all.append(json_data)
 
     json.dump(json_data_all, open("images.json", "w+"))
