@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Item } from "../types";
 import { useProgress } from "../contexts/progressContext";
 
@@ -6,15 +6,46 @@ const Page = (item: Item) => {
   const { progress, setProgress } = useProgress();
   const drawingColors = item.colors;
 
-  const drawing = item.drawing.map((row) => [
-    ...row.map((color) => drawingColors[color]),
-  ]);
+  // Map numeric drawing indices to hex strings, asserting defined values
+  const drawing: string[][] = item.drawing.map((row) =>
+    row.map((color) => drawingColors[color]!)
+  );
 
   const [drawingMask, setDrawingMask] = useState(
     Array.from({ length: item.drawing.length }, () =>
       Array(item.drawing[0].length).fill(0)
     )
   );
+
+  const [total_per_color, set_total_per_color] = useState<
+    Record<string, number>
+  >(() => {
+    // Count all occurrences of each hex in the drawing
+    const counts: Record<string, number> = {};
+    drawing.forEach((row) => {
+      row.forEach((hex) => {
+        counts[hex] = (counts[hex] ?? 0) + 1;
+      });
+    });
+    return counts;
+  });
+
+  // Compute colored counts based on drawingMask
+  const colored = useMemo<Record<string, number>>(() => {
+    const counts: Record<string, number> = {};
+    Object.values(drawingColors).forEach((hex) => {
+      if (hex) counts[hex] = 0;
+    });
+    drawingMask.forEach((row, rowIndex) => {
+      row.forEach((maskVal, colIndex) => {
+        if (maskVal === 1) {
+          const hex = drawing[rowIndex][colIndex];
+          counts[hex] = (counts[hex] ?? 0) + 1;
+        }
+      });
+    });
+    return counts;
+  }, [drawingMask, drawing]);
 
   useEffect(() => {
     const allGood = drawingMask.every((row) =>
@@ -89,7 +120,15 @@ const Page = (item: Item) => {
                 cursor: "pointer",
                 aspectRatio: "1 / 1",
                 height: "auto",
-                border: `2px solid white`,
+
+                borderWidth: "2px",
+                borderStyle: "solid",
+                borderImageSource: `conic-gradient(${hex} 0%, ${hex} ${
+                  (colored[hex!] / total_per_color[hex!]) * 100
+                }%, ${chooseTextColor(hex)} ${
+                  (colored[hex!] / total_per_color[hex!]) * 100
+                }%,  ${chooseTextColor(hex)} 100%)`,
+                borderImageSlice: 1,
                 boxShadow:
                   selectedColor === color ? `0 0 0 4px ${hex}` : "none",
                 textAlign: "center",
