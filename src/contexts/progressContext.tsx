@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
-import games from "../games";
-export const possibleGames = games.map((game) => game.name);
+import { loadGames } from "../games";
+export const possibleGames = (await loadGames()).map((game) => game.name);
 type GameName = (typeof possibleGames)[number];
 export interface ProgressContextType {
   progress: Record<GameName, boolean>;

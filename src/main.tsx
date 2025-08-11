@@ -10,13 +10,33 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <ProgressProvider value={{ progress: {}, setProgress: () => {} }}>
+    <ProgressProvider
+      value={{
+        progress: {
+          ...Object.fromEntries(
+            Object.keys(localStorage)
+              .filter((key) => key.startsWith("progress_"))
+              .map((key) => [
+                key.substring("progress_".length),
+                JSON.parse(localStorage.getItem(key) || "false"), // Handles keys with spaces
+              ])
+          ),
+        },
+        setProgress: (game, done) => {
+          localStorage.setItem(`progress_${game}`, JSON.stringify(done));
+        },
+      }}
+    >
       <WallpaperProvider
-        value={{ wallpaper: wallpaperList[0], setWallpaper: () => {} }}
+        value={{
+          wallpaper: wallpaperList[0],
+          setWallpaper: (wallpaper) => {
+            document.body.style.backgroundImage = `url(${String(wallpaper)})`;
+          },
+        }}
       >
         <App />
       </WallpaperProvider>
     </ProgressProvider>
   </React.StrictMode>
 );
-

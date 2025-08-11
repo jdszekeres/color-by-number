@@ -30,6 +30,9 @@ def create_image_json(name, colors_length, file):
     closest_color = lambda rgb: colors[
         np.argmin(np.sqrt(np.sum((colors - np.array(rgb)) ** 2, axis=1)))
     ]
+
+    colors.sort(key=lambda x: (x[0] + x[1] + x[2]), reverse=False)
+
     for x, i in enumerate(map):
         for y, j in enumerate(i):
             val = j[0:-1]
@@ -60,7 +63,7 @@ def main():
         json_data = create_image_json(name, 40, file)
         json_data_all.append(json_data)
 
-    json.dump(json_data_all, open("images.json", "w+"))
+    json.dump(json_data_all, open("files/images.json", "w+"))
 
 
 if __name__ == "__main__":

@@ -1,6 +1,12 @@
 import React from "react";
 import { Item } from "../types";
-const SampleRenderer = ({ item }: { item: Item }) => {
+const SampleRenderer = ({
+  item,
+  completed,
+}: {
+  item: Item;
+  completed: boolean;
+}) => {
   const width = item.drawing[0].length;
   const height = item.drawing.length;
   const cellSize = 128 / Math.min(width, height);
@@ -19,6 +25,31 @@ const SampleRenderer = ({ item }: { item: Item }) => {
           margin: "0 auto",
         }}
       >
+        {completed && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              fontSize: "1.5rem",
+              padding: "0",
+            }}
+          >
+            ✅
+          </div>
+        )}
+        {completed && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "128px",
+              height: "128px",
+              background: "rgba(0,0,0,0.5)",
+            }}
+          ></div>
+        )}
         <table
           style={{ borderCollapse: "collapse", margin: "1rem auto" }}
           cellPadding={0}
