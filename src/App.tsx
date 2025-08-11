@@ -86,7 +86,11 @@ const App = () => {
     return (
       <div
         className="app"
-        style={{ backgroundImage: `url(${String(wallpaper)})` }}
+        style={{
+          overflow: "scroll",
+          width: "100%",
+          height: "100%",
+        }}
       >
         <Header
           isHome={true}

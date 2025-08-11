@@ -21,3 +21,6 @@ sketch
 images
 files
 drawings
+
+dist
+tsconfig.tsbuildinfo

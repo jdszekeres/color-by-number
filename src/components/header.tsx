@@ -14,7 +14,7 @@ const Header = ({ isHome, goHome, setSearch, search }: HeaderProps) => {
   const [showDropdown, setShowDropdown] = React.useState(false);
 
   useEffect(() => {
-    const p = (e) => e.preventDefault();
+    const p = (e: Event) => e.preventDefault();
     if (showDropdown) {
       document.body.style.overflowX = "hidden";
       document.documentElement.style.scrollbarWidth = "none";

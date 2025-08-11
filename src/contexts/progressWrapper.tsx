@@ -1,7 +1,11 @@
 import React from "react";
 import { ProgressProvider } from "./progressContext";
 
-export const ProgressWrapper = ({ children }) => {
+export const ProgressWrapper = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [progress, setProgressState] = React.useState(
     Object.fromEntries(
       Object.keys(localStorage)
@@ -12,7 +16,7 @@ export const ProgressWrapper = ({ children }) => {
         ])
     )
   );
-  const setProgress = (game, done) => {
+  const setProgress = (game: string, done: boolean) => {
     localStorage.setItem(`progress_${game}`, JSON.stringify(done));
     setProgressState((prev) => ({ ...prev, [game]: done }));
   };

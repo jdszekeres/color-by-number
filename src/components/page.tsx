@@ -74,7 +74,7 @@ const Page = (item: Item) => {
       ? `min(${cellSize}, ${maxCellSizeByWidth})`
       : cellSize;
 
-  function chooseTextColor(t) {
+  function chooseTextColor(t: string): string {
     let e = t.replace("#", ""),
       r = parseInt(e.substring(0, 2), 16),
       s = parseInt(e.substring(2, 4), 16),
@@ -114,7 +114,7 @@ const Page = (item: Item) => {
               key={color}
               style={{
                 backgroundColor: hex,
-                color: chooseTextColor(hex),
+                color: chooseTextColor(hex!),
                 padding: "1rem",
                 borderRadius: "4px",
                 cursor: "pointer",
@@ -125,9 +125,9 @@ const Page = (item: Item) => {
                 borderStyle: "solid",
                 borderImageSource: `conic-gradient(${hex} 0%, ${hex} ${
                   (colored[hex!] / total_per_color[hex!]) * 100
-                }%, ${chooseTextColor(hex)} ${
+                }%, ${chooseTextColor(hex!)} ${
                   (colored[hex!] / total_per_color[hex!]) * 100
-                }%,  ${chooseTextColor(hex)} 100%)`,
+                }%,  ${chooseTextColor(hex!)} 100%)`,
                 borderImageSlice: 1,
                 boxShadow:
                   selectedColor === color ? `0 0 0 4px ${hex}` : "none",
