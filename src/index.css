@@ -22,7 +22,6 @@ body {
     background-attachment: fixed;
     background-color: #000;
 
-    overflow-y: hidden;
 }
 .app {
         background-size: 100%;
